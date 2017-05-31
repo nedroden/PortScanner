@@ -72,8 +72,8 @@ def parse_ports(ports):
 	if len(port_range) == 1:
 		port_range.append(port_range[0])
 
-	elif port_range[1] > port_range[0]:
-		report_error('Second port number cannot be higher than the first port number')
+	elif port_range[0] > port_range[1]:
+		report_error('First port number cannot be higher than the second port number')
 
 	return port_range
 

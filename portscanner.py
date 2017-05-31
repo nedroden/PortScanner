@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import sys
 import os
 import socket
@@ -7,6 +8,7 @@ portscan_version = '1.0.0'
 portscan_copyright = '2017, Robert Monden'
 
 port_max = 65535
+port_min = 1
 
 terminal_width = os.get_terminal_size().columns
 
@@ -44,6 +46,7 @@ def report_error(message):
 def get_args():
 	if len(sys.argv) < 2:
 		report_error('Not enough parameters')
+
 	elif len(sys.argv) > 3:
 		report_error('Too many parameters')
 
@@ -53,14 +56,24 @@ def get_args():
 def parse_ports(ports):
 	port_range = ports.split(':')
 
-	if not len(port_range) == 2:
+	if len(port_range) > 2 and len(port_range) < 1:
 		report_error('Invalid port range')
 
-	elif not port_range[0].isdigit() or not port_range[1].isdigit():
-		report_error('Ports should be numeric')
+	for portnr in port_range:
+		if not portnr.isdigit():
+			report_error('Ports should be numeric')
 
-	elif int(port_range[0]) > port_max or int(port_range[1]) > port_max:
-		report_error('Call to nonexisting port. Maximum value: ' + str(port_max))
+		elif int(portnr) > port_max:
+			report_error('Call to nonexisting port. Maximum value: ' + str(port_max))
+
+		elif int(portnr) < port_min:
+			report_error('Call to nonexisting port. Minimum value: ' + str(port_min));
+
+	if len(port_range) == 1:
+		port_range.append(port_range[0])
+
+	elif port_range[1] > port_range[0]:
+		report_error('Second port number cannot be higher than the first port number')
 
 	return port_range
 
@@ -72,6 +85,7 @@ def check_port(host, portnr, tcp = True):
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM if tcp else socket.SOCK_DGRAM)
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+		# If the port is open, the return value is 0
 		result = s.connect_ex((host, portnr))
 
 		s.close()
@@ -97,7 +111,7 @@ def check_target(host, min = 0, max = port_max, all_ports = False):
 		pass
 
 	if not found_open_port:
-		print ('No open ports found!')
+		print ('No open TCP ports found!')
 
 	return
 
@@ -117,7 +131,7 @@ def check_target(host, min = 0, max = port_max, all_ports = False):
 			pass
 
 		if not found_open_port:
-			print ('No open ports found!')
+			print ('No open UDP ports found!')
 
 
 if __name__ == '__main__':

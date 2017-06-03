@@ -1,5 +1,5 @@
 # Port Scanner
-***Port Scanner*** is a simple tool to help you find open ports associated with a certain host.
+***Port Scanner*** is a simple tool to help you find open TCP ports associated with a certain host.
 
 ## 1. Requirements
 * Python 3
@@ -12,4 +12,4 @@ If you've executed the `move_to_bin.sh` file, you can also use the port scanner 
 `portscanner [ip_address] {min_range:max_range}`
 
 ## 3. Known issues
-* UDP port detection is not working properly (all UDP ports are marked as open)
+* Performance issues when running the port scanner on Windows

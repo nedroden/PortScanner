@@ -78,11 +78,11 @@ def parse_ports(ports):
 	return port_range
 
 
-def check_port(host, portnr, tcp = True):
+def check_port(host, portnr):
 	result = -1
 
 	try:
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM if tcp else socket.SOCK_DGRAM)
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 		# If the port is open, the return value is 0
@@ -112,26 +112,6 @@ def check_target(host, min = 0, max = port_max, all_ports = False):
 
 	if not found_open_port:
 		print ('No open TCP ports found!')
-
-	return
-
-	print ('Scan for UDP ports (warning: will take time)? [Y/n] ', end='')
-	key = input()
-
-	if key.strip().lower() == 'y':
-		found_open_port = False
-
-		try:
-			for portnr in range(min, max + 1):
-				if check_port(host, portnr, False):
-					report(' !! Found open UDP port: ' + str(portnr))
-					found_open_port = True
-
-		except KeyboardInterrupt as e:
-			pass
-
-		if not found_open_port:
-			print ('No open UDP ports found!')
 
 
 if __name__ == '__main__':
